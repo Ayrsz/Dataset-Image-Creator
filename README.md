@@ -48,6 +48,11 @@ Parameters:
 2: generate_gaussian_noise(image)
 ~~~
 
+Add gaussian noise in the image: each pixel of the image is added by a number obtained through normal distribution. The library random was used for this function
+
+Parameters:
+- **mean**: mean of the distribution [**FLOAT**]
+- **variance**: The variance of the normal distribution [**FLOAT**]
 
 
 
@@ -58,6 +63,11 @@ Parameters:
 ~~~
 --- 
 
+Add an uniform noise: each pixel of the image is added by a random number between 0 and an integer "limit". The library random was used for this function
+
+Parameters:
+- **limit**: the top value of the range of numbers to be chosen randomly[**INT**]
+
 
 
 ### <red>Speckle noise</red>
@@ -66,13 +76,23 @@ Parameters:
 ~~~
 --- 
 
+Add speckle noise to the image: each pixel is added by his own value multiplied by a number from a normal distribution. The library random was used for this function
+
+Parameters:
+c
+- **variance**: The variance of the normal distribution [**FLOAT**]
+
+
 
 ### <red>Poisson noise</red>
 ~~~python
 5 generate_poisson_noise(image)
 ~~~
 
+Apply shot (poisson) noise to simulate systems in which the noise is proportional to the signal intensity. A bias is used to scale the values of each pixel. The quantity of noise will be bigger if the bias is close to 1
 
+Parameters:
+- **bias**: constant to scale the value of each pixel [**FLOAT**]
 
 
 ### <red>Salt and pepper</red>
