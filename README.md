@@ -164,11 +164,20 @@ snow { color: Snow}
 14 generate_invert_warp(image)
 ~~~
 
+
+
 #### Parâmetros:
+- **image (*numpy.ndarray*)**: Imagem de entrada a ser invertida.
 
 #### Retorno:
 
+- **numpy.ndarray**: Imagem com a inversão aplicada.
+
 #### Funcionamento:
+1. Definem-se os pontos iniciais e finais para a transformação da perspectiva.
+2. Aplica-se a transformação de perspectiva usando `cv.getPerspectiveTransform`.
+3. A imagem é invertida com a função `cv.warpPerspective` e retornada.
+
 
 ### <green>Shearing warp</green>
 
@@ -177,22 +186,35 @@ snow { color: Snow}
 ~~~
 
 #### Parâmetros:
+- **image** (*numpy.ndarray*): Imagem de entrada em formato NumPy, com 3 canais de cor (BGR)Imagem de entrada.
+- **sx** (*float*): Valor de cisalhamento no eixo X, normalizado em ([0, 1])
+- **sy** (*float*): Valor de cisalhamento no eixo Y, normalizado em ([0, 1]).
 
 #### Retorno:
+- **numpy.ndarray**: Imagem resultante do cisalhamento aplicado.
 
 #### Funcionamento:
+1. Aplica-se o cisalhamento à imagem utilizando uma matriz de transformação de cisalhamento.
+2. Retorna a imagem resultante.
 
 ### <green>Elastic warp</green>
 
 ~~~python
 16 generate_elastic_warp(image, alpha)
 ~~~
+
 #### Parâmetros:
+- **image** (*numpy.ndarray*): Imagem de entrada.
+- **alpha** (*float*): Controlar a intensidade da deformação, normalizado em ([0, 1]), sendo o valor máximo de range de shift como 0.5% de `max(L, H)` sendo L largura e H altura.
 
 #### Retorno:
+- **numpy.ndarray**: Imagem deformada elasticamente.
 
 #### Funcionamento:
-
+1. Dado o valor de `alpha`, deslocamentos aleatórios são aplicados nas coordenadas da imagem.
+2. Aplica-se o desfoque Gaussiano nas distorções.
+3. Realiza-se a deformação na imagem usando as coordenadas distorcidas.
+4. Retorna a imagem deformada.
 
 ### <green>Bilinear interpolation</green>
 
@@ -201,10 +223,16 @@ snow { color: Snow}
 ~~~
 
 #### Parâmetros:
+- **image** (*numpy.ndarray*): Imagem de entrada em formato NumPy, com 3 canais de cor (BGR).
+- **scale** (*float*): Escala para redimensionamento, normalizado entre ([0, 1]) sendo 1 a escala original.
 
 #### Retorno:
+- **numpy.ndarray**: Imagem redimensionada utilizando interpolação bilinear.
 
 #### Funcionamento:
+1. A imagem é redimensionada para um novo tamanho usando interpolação bilinear.
+2. Em seguida, a imagem redimensionada é ajustada de volta ao tamanho original.
+3. Retorna a imagem redimensionada.
 
 ### <green>Rotations</green>
 
@@ -213,10 +241,14 @@ snow { color: Snow}
 ~~~
 
 #### Parâmetros:
+- **image** (*numpy.ndarray*): Imagem de entrada em formato NumPy, com 3 canais de cor (BGR).
 
 #### Retorno:
+- **numpy.ndarray**: Imagem rotacionada.
 
 #### Funcionamento:
+1. A imagem é rotacionada em 90°, 180° e 270°.
+2. Retorna vetor com essas rotações (O.B.S: SSIM não é calculado para 90° e 270°)
 
 
 ## <pink>Sharpness and Contrast</pink>
@@ -226,10 +258,17 @@ snow { color: Snow}
 19 generate_unsharp_mask(image, intensity)
 ~~~
 #### Parâmetros:
+- **image** (*numpy.ndarray*): Imagem de entrada em formato NumPy, com 3 canais de cor (BGR).
+- **intensity** (*float*): Intensidade do efeito de nitidez.
 
 #### Retorno:
+- **numpy.ndarray**: Imagem com o efeito de nitidez aplicado.
 
 #### Funcionamento:
+1. A imagem é suavizada utilizando um desfoque Gaussiano.
+2. A diferença entre a imagem original e a suavizada é calculada.
+3. A imagem é ajustada adicionando um peso à diferença, criando o efeito de nitidez.
+4. Retorna a imagem resultante.
 
 ### <pink>Changin contrast</pink>
 ~~~python
@@ -237,10 +276,16 @@ snow { color: Snow}
 ~~~
 
 #### Parâmetros:
+- **image** (*numpy.ndarray*): Imagem de entrada em formato NumPy, com 3 canais de cor (BGR).
+- **intensity** (*float*): Intensidade do contraste (valores > 1 aumentam o contraste e valores < 1 diminuem).
 
 #### Retorno:
+- **numpy.ndarray**: Imagem com o ajuste de contraste aplicado.
 
 #### Funcionamento:
+1. O contraste da imagem é ajustado multiplicando os valores dos pixels por um fator de intensidade.
+2. Retorna a imagem ajustada.
+
 
 
 ## <snow>Brigthness</snow>
@@ -249,12 +294,15 @@ snow { color: Snow}
 ~~~python
 21 generate_global_brigthness(image, intensity)
 ~~~
-
 #### Parâmetros:
+- **image** (*numpy.ndarray*): Imagem de entrada em formato NumPy, com 3 canais de cor (BGR).
+- **intensity** (*float*): Intensidade da adição, sendo 1 o valor médio de brilho, valores negativos diminuem a intensidade. 
 
 #### Retorno:
-
+- **numpy.ndarray:** Imagem com adição/subtração de uma fração do valor médio de intensidade
 #### Funcionamento:
+- Calculo da média de luminância da imagem de entrada.
+- Multiplica essa média por `intensity`.
 
 
 
@@ -267,8 +315,12 @@ snow { color: Snow}
 - **gama** (*float*): Taxa de ajuste/diminuição da iluminação, para gama em ((0, 1)), diminui a iluminação e para gama maior que 1, aumenta a iluminação.
 
 #### Retorno:
+- **numpy.ndarray:** Imagem "corrijida" com o fato gama
 
 #### Funcionamento
+1. Normaliza todos os valores da imagem (Nos três canais) dividindo por 255.
+2. Eleva todas esses valores por `gamma` e multiplica por 255.
+3. Retorna imagem ajustada.
 
 ### <snow>Random local brigthness</snow>
 ~~~python
