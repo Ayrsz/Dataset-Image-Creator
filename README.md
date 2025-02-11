@@ -66,76 +66,165 @@ snow { color: Snow}
 ### <red> Gaussian noise </red>
 
 ~~~python
-2: generate_gaussian_noise(image)
+2: generate_gaussian_noise(image, mean, variance)
 ~~~
 
-Add gaussian noise in the image: each pixel of the image is added by a number obtained through normal distribution. The library random was used for this function
+#### Parâmetros:
+ **image** (*numpy.ndarray*): Imagem de entrada em formato NumPy, com um ou três canais.
+- **mean** (*float*): média da distribuição gaussiana
+- **variance** (*float*): A variância da distribuição gaussiana 
 
-Parameters:
-- **mean**: mean of the distribution [**FLOAT**]
-- **variance**: The variance of the normal distribution [**FLOAT**]
+#### Retorno:
+- **numpy.ndarray**: Imagem com ruído gaussiano adicionado.
 
-
+#### Funcionamento:
+1. Analisa se a imagem possui apenas um canal (escala de cinza) ou três canais
+2. Usa a função `random.normal` para gerar uma nova matriz com mesmo tamanho da imagem original a partir de amostras de uma distribuição gaussiana com variância `variance`e média `mean`
+3. Retorna a soma das imagens originais com a matriz de valores da distribuição gaussiana, gerando ruído na imagem.
 
 ### <red>Uniform noise</red>
 
 ~~~python
-3: generate_uniform_noise(image)
+3: generate_uniform_noise(image, limit)
 ~~~
---- 
 
-Add an uniform noise: each pixel of the image is added by a random number between 0 and an integer "limit". The library random was used for this function
+#### Parâmetros:
+ **image** (*numpy.ndarray*): Imagem de entrada em formato NumPy, com um ou três canais.
+- **limit** (*int*): limite máximo dos valores que serão adicioandos à imagem original
 
-Parameters:
-- **limit**: the top value of the range of numbers to be chosen randomly[**INT**]
+#### Retorno:
+- **numpy.ndarray**: Imagem com ruído uniforme adicionado.
 
+#### Funcionamento:
+1. Usa a função `random.randint` para gerar uma nova matriz com mesmo tamanho da imagem original a partir de números aleatórios entre 0 e `limit`*
+2. Retorna a soma a imagem original com a matriz de valores aleatŕoios
+3. A imagem retornada possui uma quantidade maior de ruídos brancos 
+
+**Obs*: Como a intenção é gerar ruído branco (white noise), essa função não gera valores menores que 0
 
 
 ### <red>Speckle noise</red>
 ~~~python
-4 generate_speckle_noise(image)
+4: generate_speckle_noise(image)
 ~~~
 --- 
 
-Add speckle noise to the image: each pixel is added by his own value multiplied by a number from a normal distribution. The library random was used for this function
+#### Parâmetros:
+ **image** (*numpy.ndarray*): Imagem de entrada em formato NumPy, com um ou três canais.
+- **mean** (*float*): média da distribuição gaussiana
+- **variance** (*float*): A variância da distribuição gaussiana 
 
-Parameters:
-c
-- **variance**: The variance of the normal distribution [**FLOAT**]
+#### Retorno:
+- **numpy.ndarray**: Imagem com ruído speckle adicionado.
+
+#### Funcionamento:
+1. Analisa se a imagem possui apenas um canal (escala de cinza) ou três canais
+2. Usa a função `random.normal` para gerar uma nova matriz com mesmo tamanho da imagem original a partir de amostras de uma distribuição gaussiana com variância `variance`e média `mean`
+3. Realiza a soma das imagens originais com seus próprios valores multiplicados pela matriz de valores da distribuição gaussiana:
+        N = I + IG, onde I é a imagem original e G é a matriz de distribuição gaussiana. 
+4. A imagem retornada apresenta um ruído de caráter multiplicativo
 
 
 
-### <red>Poisson noise</red>
+### <red> Poisson noise </red>
+
 ~~~python
-5 generate_poisson_noise(image)
+5: poisson_noise(image, bias)
 ~~~
 
-Apply shot (poisson) noise to simulate systems in which the noise is proportional to the signal intensity. A bias is used to scale the values of each pixel. The quantity of noise will be bigger if the bias is close to 1
+#### Parâmetros:
+- **image** (*numpy.ndarray*): Imagem de entrada em formato NumPy, com um ou três canais.
+- **bias** (*float*): Fator de ajuste para o nível de ruído. Valores maiores aumentam a intensidade do ruído (padrão: 1).
 
-Parameters:
-- **bias**: constant to scale the value of each pixel [**FLOAT**]
+#### Retorno:
+- **numpy.ndarray**: Imagem com ruído Poisson adicionado.
+
+#### Funcionamento:
+1. Calcula o número de níveis únicos na imagem e ajusta com o fator `bias`.
+2. Ajusta esse valor para a potência de dois mais próxima, para gerar uma normalização e quantização eficientes.
+3. Usa a distribuição de Poisson para gerar ruído proporcional à intensidade dos pixels da imagem.
+4. Normaliza os valores resultantes e os converte para valores inteiros entre 0 e 255.
+5. Retorna a imagem original com o ruído Poisson aplicado.
 
 
-### <red>Salt and pepper</red>
+
+### <red> Salt-and-Pepper noise </red>
+
 ~~~python
-6 generate_sep_noise(image)
+6: sep_noise(image, prob_white, amount)
 ~~~
+
+#### Parâmetros:
+- **image** (*numpy.ndarray*): Imagem de entrada em formato NumPy, com um ou três canais.
+- **prob_white** (*float*): Probabilidade de os pixels corrompidos serem brancos (padrão: 0.5).
+- **amount** (*float*): Proporção de pixels afetados pelo ruído em relação ao total da imagem (padrão: 0.004).
+
+#### Retorno:
+- **numpy.ndarray**: Imagem com ruído Salt-and-Pepper adicionado.
+
+#### Funcionamento:
+1. Verifica se a imagem possui um ou três canais.
+3. Calcula o número de pixels que serão alterados para branco (sal) com base na probabilidade `prob_white` e no parâmetro `amount`.
+4. Gera coordenadas aleatórias para aplicar o ruído branco e altera os valores dos pixels correspondentes para 255.
+5. Calcula o número de pixels que serão alterados para preto (pimenta) com base na probabilidade `1-prob_white` e no parâmetro `amount` gera coordenadas aleatórias para esses pontos.
+6. Gera coordenadas aleatórias para aplicar o ruído preto e altera os valores dos pixels correspondentes para 0.
+7. Retorna a imagem original com o ruído Salt-and-Pepper aplicado.
+
+
 
 ## <blue>Colors</blue>
 
-### <blue>Color diffusion</blue>
-~~~python
-7 generate_color_diffusion(image)
-~~~
---- 
 
+### <red> Color Diffusion </red>
 
-### <blue>Color shift</blue>
 ~~~python
-8 generate_color_shift(image)
+7: color_diffusion(img, kernel_size, sigma)
 ~~~
 
----  
+#### Parâmetros:
+- **img** (*numpy.ndarray*): Imagem de entrada em formato NumPy, representada no espaço de cores BGR.
+- **kernel_size** (*int*): Tamanho do kernel usado para a suavização gaussiana dos canais de cor (padrão: 99).
+- **sigma** (*float*): Desvio padrão da distribuição gaussiana usada no desfoque (padrão: 0).
+
+#### Retorno:
+- **numpy.ndarray**: Imagem suavizada com difusão de cor aplicada.
+
+#### Funcionamento:
+1. Converte a imagem de BGR para RGB e de RGB para o espaço de cor CIE-Lab.
+2. Separa os canais L, a e b.
+3. Aplica um desfoque gaussiano aos canais a e b usando o tamanho de kernel `kernel_size` e `sigma` especificados.
+4. Recombina os canais L, a e b para formar a imagem difusa no espaço Lab.
+5. Converte a imagem de volta para RGB.
+6. Retorna a imagem normalizada em inteiro de 0 a 255 e convertida para o espaço de cores BGR.
+
+
+
+
+### <red> Color Shift </red>
+
+~~~python
+8: color_shift(img, tx, ty)
+~~~
+
+#### Parâmetros:
+- **img** (*numpy.ndarray*): Imagem de entrada em formato NumPy, representada no espaço de cores BGR.
+- **tx** (*int*): Deslocamento horizontal aplicado ao canal verde normalizado pela magnitude do gradiente (padrão: 1).
+- **ty** (*int*): Deslocamento vertical aplicado à canal verde normalizado pela magnitude do gradiente (padrão: 8).
+
+#### Retorno:
+- **numpy.ndarray**: Imagem com efeito de deslocamento de cor aplicado.
+
+#### Funcionamento:
+1. Converte a imagem de BGR para escala de cinza.
+2. Calcula os gradientes da imagem usando operadores Sobel nas direções x e y.
+3. Obtém a magnitude do gradiente e normaliza usando um desfoque gaussiano.
+4. Define uma matriz de transformação afim para deslocamento nos eixos x e y.
+5. Separa os canais de cor da imagem.
+6. Aplica o deslocamento da magnitude ao canal verde.
+7. Mescla os canais de cor, combinando o canal verde modificado com os outros canais originais.
+8. Retorna a imagem resultante com o efeito de deslocamento de cor.
+
+
 
 
 ### <blue>Color quantization</blue>
