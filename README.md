@@ -175,7 +175,7 @@ snow { color: Snow}
 ## <blue>Colors</blue>
 
 
-### <red> Color Diffusion </red>
+### <blue> Color Diffusion </blue>
 
 ~~~python
 7: color_diffusion(img, kernel_size, sigma)
@@ -200,7 +200,7 @@ snow { color: Snow}
 
 
 
-### <red> Color Shift </red>
+### <blue> Color Shift </red>
 
 ~~~python
 8: color_shift(img, tx, ty)
@@ -217,51 +217,127 @@ snow { color: Snow}
 #### Funcionamento:
 1. Converte a imagem de BGR para escala de cinza.
 2. Calcula os gradientes da imagem usando operadores Sobel nas direções x e y.
-3. Obtém a magnitude do gradiente e normaliza usando um desfoque gaussiano.
-4. Define uma matriz de transformação afim para deslocamento nos eixos x e y.
+3. Obtém a magnitude do gradiente e aplica um desfoque gaussiano, para que as regiões de alta frequência sejam translocadas com uma margem maior.
+4. Normaliza a matriz magnitude e define uma matriz de transformação afim para deslocamento nos eixos x e y, determinado pela quantidade de pixels `tx`e `ty`.
 5. Separa os canais de cor da imagem.
-6. Aplica o deslocamento da magnitude ao canal verde.
-7. Mescla os canais de cor, combinando o canal verde modificado com os outros canais originais.
+6. Aplica o deslocamento apenas ao canal verde.
+7. Mescla os canais de cor, combinando o canal verde modificado pela magnitude com os outros canais originais.
 8. Retorna a imagem resultante com o efeito de deslocamento de cor.
 
 
 
 
 ### <blue>Color quantization</blue>
+
 ~~~python
-9 generate_color_quantization(image)
+9: color_quantization(img, k)
 ~~~
 
+#### Parâmetros:
+- **img** (*numpy.ndarray*): Imagem de entrada em formato NumPy, representada no espaço de cores BGR.
+- **k** (*int*): Número de cores para quantização via K-Means (padrão: 8).
+
+#### Retorno:
+- **numpy.ndarray**: Imagem quantizada com cores reduzidas.
+
+#### Funcionamento:
+1. Converte a imagem do espaço de cores BGR para LAB.
+2. Aplica o algoritmo de `kmeans` do opencv para quantizar a imagem em `k` clusters de cores.
+3. Converte a imagem quantizada de volta para o espaço de cores BGR.
+4. Retorna a imagem com cores reduzidas de acordo com a quantização.
 
 
-### <blue>Color saturation HSV</blue>
+
+### <blue> Color Saturation (HSV) </blue>
+
 ~~~python
-10 generate_color_saturation_hsv(image)
+10: color_saturation_hsv(img, factor)
 ~~~
 
+#### Parâmetros:
+- **img** (*numpy.ndarray*): Imagem de entrada em formato NumPy, representada no espaço de cores BGR.
+- **factor** (*float*): Fator de amplificação da saturação. Valores maiores que 1 aumentam a saturação, enquanto valores menores reduzem a saturação (padrão: 1.3).
+
+#### Retorno:
+- **numpy.ndarray**: Imagem com saturação ajustada.
+
+#### Funcionamento:
+1. Converte a imagem do espaço de cores BGR para HSV.
+2. Separa os canais H, S e V da imagem.
+3. Multiplica o canal de saturação (S) pelo fator de ajuste `factor`.
+4. Garante que os valores do canal de saturação permaneçam dentro do intervalo válido (0 a 255).
+5. Converte a imagem de volta para o espaço de cores BGR.
+6. Retorna a imagem com a saturação modificada.
 
 
 
 
-### <blue>Color saturation L.A.B</blue>
+### <blue> Color Saturation (Lab) </blue>
+
 ~~~python
-11 generate_color_saturation_lab(image)
+11: color_saturation_lab(img, factora=4, factorb=4)
 ~~~
+
+#### Parâmetros:
+- **img** (*numpy.ndarray*): Imagem de entrada em formato NumPy, representada no espaço de cores BGR.
+- **factora** (*float*): Fator de amplificação para o canal a do espaço LAB. Valores maiores aumentam a saturação nesse canal (padrão: 4).
+- **factorb** (*float*): Fator de amplificação para o canal b do espaço LAB. Valores maiores aumentam a saturação nesse canal (padrão: 4).
+
+#### Retorno:
+- **numpy.ndarray**: Imagem com saturação ajustada.
+
+#### Funcionamento:
+1. Converte a imagem do espaço de cores BGR para RGB.
+2. Transforma a imagem do espaço de cores RGB para CIE-Lab.
+3. Separa os canais L, a e b da imagem.
+4. Multiplica os canais a e b pelos fatores especificados `factora` e `factorb`.
+5. Converte a imagem processada de volta para o espaço de cores RGB.
+6. Garante que os valores dos pixels no modelo RGB estão dnetro do intervalo (0 a 255)
+7. Transforma a imagem RGB novamente para BGR.
+8. Retorna a imagem com a saturação modificada.
+
+
 
 
 ## <yellow> JPEG'S compressions </yellow>
 
-### <yellow>JPEG compression</yellow>
+### <yellow> JPEG Compression </yellow>
+
 ~~~python
-12 generate_compression_jpeg(image)
+12: jpeg_compression(img, quality)
 ~~~
+
+#### Parâmetros:
+- **img** (*numpy.ndarray*): Imagem de entrada em formato NumPy, representada no espaço de cores BGR.
+- **quality** (*int*): Qualidade da compressão JPEG (intervalo de 0 a 100, onde valores menores resultam em maior compressão e perda de qualidade, padrão: 10).
+
+#### Retorno:
+- **numpy.ndarray**: Imagem comprimida no formato JPEG e redecodificada para BGR.
+
+#### Funcionamento:
+1. Codifica a imagem para o formato JPEG com a qualidade `quality` especificada usando a função `imencode` do opencv.
+2. Decodifica a imagem comprimida de volta para o formato numpy no espaço de cores BGR.
+3. Retorna a imagem reconstituída após a compressão JPEG.
+
 
 
 ### <yellow>JPEG2000 compression</yellow>
 
-~~~python 
-13 generate_compression_jpeg2000(image)
+~~~python
+13: jpeg2000_compression(img, compression_rate)
 ~~~
+
+#### Parâmetros:
+- **img** (*numpy.ndarray*): Imagem de entrada em formato NumPy, representada no espaço de cores BGR.
+- **compressionRate** (*int*): Taxa de compressão aplicada ao formato JPEG 2000 (valores maiores resultam em maior compressão, padrão: 50).
+
+#### Retorno:
+- **numpy.ndarray**: Imagem comprimida no formato JPEG 2000 e redecodificada para BGR.
+
+#### Funcionamento:
+1. Codifica a imagem para o formato JPEG 2000 com a taxa de compressão `compression_rate` especificada usando a função `imencode` do opencv.
+2. Decodifica a imagem comprimida de volta para o formato NumPy no espaço de cores BGR.
+3. Retorna a imagem reconstituída após a compressão JPEG 2000.
 
 
 
