@@ -1,21 +1,5 @@
-<style>
-grey { color: Grey }
-red { color: LightCoral }
-blue { color: DeepSkyBlue }
-yellow { color: Yellow}
-green { color: LightGreen}
-pink { color: DeepPink}
-snow { color: Snow}
-</style>
-
-
-
-
-# References and Methods
-
-
 # Propose
-
+A general propose and scalabe dataset creator, with the propose of train AI to IQA methods
 
 # Functions
 
