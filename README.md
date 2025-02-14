@@ -1,5 +1,5 @@
 # Propose
-A general propose and scalabe dataset creator, with the propose of train AI to IQA methods
+A scalabe dataset sintetic creator of images.
 
 # Functions
 
